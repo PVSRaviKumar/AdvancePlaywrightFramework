@@ -1,6 +1,0 @@
-{
-  "runId": "20260822_174245",
-  "tests": {
-    "chromium › login.spec.ts › TTACart - Login › logs in with valid credentials @p0": "passed"
-  }
-}
