@@ -1,8 +1,17 @@
 
+
 # Playwright
 node_modules/
+.env
+.env.*
+!.env.example
 /test-results/
 /playwright-report/
 /blob-report/
 /playwright/.cache/
 /playwright/.auth/
+
+# Framework artifacts
+/logs/
+/reports/
+/tta-report/
