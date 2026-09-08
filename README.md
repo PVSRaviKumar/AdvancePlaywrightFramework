@@ -29,6 +29,7 @@ STG_BASE_URL=https://stage.thetestingacademy.com/
 DEV_BASE_URL=http://localhost:3000/
 API_BASE_URL=https://restful-booker.herokuapp.com/
 LOG_LEVEL=info
+ATTACH_SCREENSHOTS=false
 USERNAME=your-username
 PASSWORD=your-password
 ```
@@ -43,7 +44,7 @@ PASSWORD=your-password
 | `stage`, `stg`, `staging` | `STG_BASE_URL` | `https://stage.thetestingacademy.com` |
 | `prod`, `production` | `PROD_BASE_URL` | `https://app.thetestingacademy.com` |
 
-The default environment is `qa`.
+The default environment is `qa`. `BASE_URL` takes precedence over `TTA_ENV` and the environment-specific URL variables. Set `ATTACH_SCREENSHOTS=true` to attach screenshots on test failure; videos and traces are enabled for every test run.
 
 ## Running Tests
 
@@ -69,7 +70,22 @@ npx playwright test --ui
 npx playwright test --debug
 ```
 
-The configuration in `playwright.config.ts` uses a 60-second test timeout, a 10-second assertion timeout, fully parallel execution, and Chromium as the browser project. Screenshots, videos, and traces are collected for test runs.
+The configuration in `playwright.config.ts` uses a 60-second test timeout, a 10-second assertion timeout, fully parallel execution, and Chromium as the browser project. Videos and traces are collected for every test; screenshots are collected only when `ATTACH_SCREENSHOTS=true`.
+
+### Shared fixtures
+
+The custom test fixture in `src/fixtures/test-base.ts` provides ready-to-use page objects and reusable application states:
+
+```ts
+import { test, expect } from '@fixtures/test-base';
+
+test('add an item to the cart', async ({ loginWithSelectedItem, cartPage }) => {
+  await cartPage.open();
+  expect(await cartPage.rowCount()).toBe(1);
+});
+```
+
+Use the fixture when a test needs shared page-object setup or an authenticated state. Tests that do not need those helpers can continue importing `test` directly from `@playwright/test`.
 
 ## Reports and Artifacts
 
@@ -87,7 +103,7 @@ Generated artifacts are written to `test-results/`, `playwright-report/`, `repor
 src/
   api/       API client implementations
   config/    Environment and configuration modules
-  fixtures/  Reusable Playwright fixtures
+  fixtures/  Reusable Playwright fixtures and application states
   pages/     Page Object Model classes
   testdata/  Test data files
   tests/     Playwright test specifications
